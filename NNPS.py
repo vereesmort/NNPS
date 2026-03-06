@@ -38,11 +38,9 @@ import scipy.sparse as sp
 from sklearn import metrics
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
-from keras.layers.core import Dropout, Activation
-from keras import optimizers
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.models import load_model
+from tensorflow.keras.layers import Dropout, Activation, Dense
+from tensorflow.keras import optimizers, Sequential
+from tensorflow.keras.models import load_model
 #----------------------------------------------------------------------------
 # Returns dictionary from combination ID to pair of stitch IDs, 
 # dictionary from combination ID to list of polypharmacy side effects, 
@@ -296,7 +294,7 @@ model.add(Activation('relu'))
 model.add(Dropout(0.1))
 model.add(Dense(input_dim=100, kernel_initializer='glorot_normal', units=1))
 model.add(Activation('sigmoid'))
-sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+sgd = optimizers.SGD(learning_rate=0.01, decay=1e-6, momentum=0.9, nesterov=True)
 model.compile(loss='binary_crossentropy', optimizer=sgd, metrics=['accuracy'])
 #------------------------------------------------------------------------
 #get criteria
@@ -341,36 +339,36 @@ for k in range(n_drugdrug_rel_types):
     acc.append(ac)
     mc=metrics.matthews_corrcoef(test_label_org[k],to_labels(model.predict(test_org[k]), bt))
     mcc.append(mc)
-model.save('model.h5')
-loaded_model =load_model('model.h5')
+model.save('NNPS.h5')
+loaded_model =load_model('NNPS.h5')
 loaded_model.compile(loss='binary_crossentropy', optimizer=sgd, metrics=['accuracy'])
-for k in range(541):
-    print(k)
-    model.fit(train_org[k],train_label_org[k],batch_size=1024, epochs=50)
-    model.evaluate(val_org[k], val_label_org[k])
-    model.evaluate(test_org[k], test_label_org[k])
-    roc=metrics.roc_auc_score(test_label_org[k],model.predict(test_org[k]))
-    roc_score[k]=roc
-    aupr=metrics.average_precision_score(test_label_org[k],model.predict(test_org[k]))
-    aupr_score[k]=aupr
-    fpr, tpr, thresholds=metrics.roc_curve(test_label_org[k],model.predict(test_org[k]))
-    scores=[metrics.f1_score(test_label_org[k], to_labels(model.predict(test_org[k]), t)) for t in thresholds]
-    ma= max(scores)
-    f_score[k]=ma
-    idx=np.argmax(scores)
-    bt=thresholds[idx]
-    thr[k]=bt
-    p=metrics.precision_score(test_label_org[k], to_labels(model.predict(test_org[k]), bt))
-    precision[k]=p
-    r=metrics.recall_score(test_label_org[k], to_labels(model.predict(test_org[k]), bt))
-    recall[k]=r
-    TP, FP, TN, FN=perf_measure(test_label_org[k],to_labels(model.predict(test_org[k]), bt))
-    tpos[k]=TP
-    fpos[k]=FP
-    tneg[k]=TN
-    fneg[k]=FN
-    ac = float(TP + TN)/(TP+FP+FN+TN)
-    acc[k]=ac
-    mc=metrics.matthews_corrcoef(test_label_org[k],to_labels(model.predict(test_org[k]), bt))
-    mcc[k]=mc
+# for k in range(541):
+#     print(k)
+#     model.fit(train_org[k],train_label_org[k],batch_size=1024, epochs=50)
+#     model.evaluate(val_org[k], val_label_org[k])
+#     model.evaluate(test_org[k], test_label_org[k])
+#     roc=metrics.roc_auc_score(test_label_org[k],model.predict(test_org[k]))
+#     roc_score[k]=roc
+#     aupr=metrics.average_precision_score(test_label_org[k],model.predict(test_org[k]))
+#     aupr_score[k]=aupr
+#     fpr, tpr, thresholds=metrics.roc_curve(test_label_org[k],model.predict(test_org[k]))
+#     scores=[metrics.f1_score(test_label_org[k], to_labels(model.predict(test_org[k]), t)) for t in thresholds]
+#     ma= max(scores)
+#     f_score[k]=ma
+#     idx=np.argmax(scores)
+#     bt=thresholds[idx]
+#     thr[k]=bt
+#     p=metrics.precision_score(test_label_org[k], to_labels(model.predict(test_org[k]), bt))
+#     precision[k]=p
+#     r=metrics.recall_score(test_label_org[k], to_labels(model.predict(test_org[k]), bt))
+#     recall[k]=r
+#     TP, FP, TN, FN=perf_measure(test_label_org[k],to_labels(model.predict(test_org[k]), bt))
+#     tpos[k]=TP
+#     fpos[k]=FP
+#     tneg[k]=TN
+#     fneg[k]=FN
+#     ac = float(TP + TN)/(TP+FP+FN+TN)
+#     acc[k]=ac
+#     mc=metrics.matthews_corrcoef(test_label_org[k],to_labels(model.predict(test_org[k]), bt))
+#     mcc[k]=mc
 
