@@ -31,13 +31,10 @@ from scipy.stats import ks_2samp
 import numpy as np
 import random
 import pandas as pd
-import seaborn as sns
 import tensorflow as tf
-import networkx as nx
 import scipy.sparse as sp
 from sklearn import metrics
 from sklearn.decomposition import PCA
-import matplotlib.pyplot as plt
 from tensorflow.keras.layers import Dropout, Activation, Dense
 from tensorflow.keras import optimizers, Sequential
 from tensorflow.keras.models import load_model
@@ -138,7 +135,7 @@ display(df)
 val_test_size=0.05
 n_drugs=645
 n_proteins=8934
-n_drugdrug_rel_types=964
+n_drugdrug_rel_types=30
 #---------------------------------------------------------------------------
 #list of drugs
 lst=[]
@@ -342,6 +339,31 @@ for k in range(n_drugdrug_rel_types):
 model.save('NNPS.h5')
 loaded_model =load_model('NNPS.h5')
 loaded_model.compile(loss='binary_crossentropy', optimizer=sgd, metrics=['accuracy'])
+
+#------------------------------------------------------------------------
+#save results
+
+results_df = pd.DataFrame({
+    "side_effect_index": list(range(n_drugdrug_rel_types)),
+    "side_effect_id": [df.at[k, "Side Effect"] for k in range(n_drugdrug_rel_types)],
+    "side_effect_name": [df.at[k, "Name"] for k in range(n_drugdrug_rel_types)],
+    "roc_auc": roc_score,
+    "aupr": aupr_score,
+    "f1": f_score,
+    "best_threshold": thr,
+    "precision": precision,
+    "recall": recall,
+    "tp": tpos,
+    "fp": fpos,
+    "tn": tneg,
+    "fn": fneg,
+    "accuracy": acc,
+    "mcc": mcc,
+})
+
+results_df.to_csv("Results/NNPS_30_results.csv", index=False)
+
+
 # for k in range(541):
 #     print(k)
 #     model.fit(train_org[k],train_label_org[k],batch_size=1024, epochs=50)
