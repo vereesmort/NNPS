@@ -42,7 +42,7 @@ from tensorflow.keras.models import load_model
 # Returns dictionary from combination ID to pair of stitch IDs, 
 # dictionary from combination ID to list of polypharmacy side effects, 
 # and dictionary from side effects to their names.
-def load_combo_se(fname='combo.csv'):
+def load_combo_se(fname='Datasets/bio-decagon-combo.csv'):
     combo2stitch = {}
     combo2se = defaultdict(set)
     se2name = {}
@@ -62,7 +62,7 @@ def load_combo_se(fname='combo.csv'):
     return combo2stitch, combo2se, se2name
 
 # Returns dictionary from Stitch ID to list of drug targets
-def load_targets(fname='targets-all.csv'):
+def load_targets(fname='Datasets/bio-decagon-targets-all.csv'):
     stitch2proteins_all = defaultdict(set)
     fin = open(fname)
     print ('Reading: %s' % fname)
