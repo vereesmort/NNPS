@@ -350,8 +350,8 @@ for k in range(n_drugdrug_rel_types):
     acc.append(ac)
     mc=metrics.matthews_corrcoef(test_label_org[k],to_labels(model.predict(test_org[k]), bt))
     mcc.append(mc)
-model.save('NNPS.h5')
-loaded_model =load_model('NNPS.h5')
+model.save('NNPS_no_leakage.h5')
+loaded_model =load_model('NNPS_no_leakage.h5')
 loaded_model.compile(loss='binary_crossentropy', optimizer=sgd, metrics=['accuracy'])
 
 #------------------------------------------------------------------------
@@ -375,6 +375,6 @@ results_df = pd.DataFrame({
     "mcc": mcc,
 })
 
-results_df.to_csv("Results/NNPS_30_results.csv", index=False)
+results_df.to_csv("Results/NNPS_no_leakage_30_results.csv", index=False)
 
 
